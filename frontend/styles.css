@@ -101,9 +101,44 @@ img {
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   font-size: 1.7rem;
   font-weight: 800;
   letter-spacing: -0.05em;
+  color: var(--secondary);
+  transition: transform 0.3s ease;
+}
+
+.brand:hover {
+  transform: translateY(-1px);
+}
+
+.brand-mark {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #fff;
+  font-size: 0.98rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  box-shadow: 0 16px 28px rgba(37, 99, 235, 0.2);
+}
+
+.brand-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  color: var(--secondary);
+  line-height: 1;
+}
+
+.brand-text span {
   color: var(--primary);
 }
 
@@ -446,6 +481,12 @@ img {
   gap: 18px;
 }
 
+.provider-card-copy {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
 .service-card-copy h3,
 .provider-main h3,
 .page-card h2,
@@ -496,12 +537,29 @@ img {
   font-weight: 700;
 }
 
+.provider-card-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
 /* Provider and booking cards */
 .provider-card,
 .booking-card {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.provider-card {
+  min-height: 100%;
 }
 
 .provider-avatar {
@@ -517,6 +575,22 @@ img {
   font-size: 1.2rem;
   font-weight: 800;
   box-shadow: 0 18px 30px rgba(37, 99, 235, 0.14);
+}
+
+.provider-card-foot {
+  margin-top: auto;
+}
+
+.provider-availability {
+  display: inline-flex;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary);
+  font-size: 0.84rem;
+  font-weight: 700;
 }
 
 .provider-meta,
@@ -863,6 +937,10 @@ hr {
   .provider-card-head {
     flex-direction: column;
   }
+
+  .provider-card-copy {
+    flex-direction: column;
+  }
 }
 
 /* Dark mode */
@@ -886,6 +964,14 @@ body.theme-dark .navbar {
   background: rgba(8, 17, 31, 0.72);
   border-bottom-color: rgba(36, 50, 71, 0.82);
   box-shadow: 0 10px 30px rgba(2, 6, 23, 0.42);
+}
+
+body.theme-dark .brand {
+  color: #f8fbff;
+}
+
+body.theme-dark .brand-mark {
+  box-shadow: 0 18px 32px rgba(2, 6, 23, 0.38);
 }
 
 body.theme-dark .btn-outline {
@@ -945,6 +1031,12 @@ body.theme-dark .provider-avatar {
 }
 
 body.theme-dark .service-card-tag {
+  background: rgba(37, 99, 235, 0.16);
+  color: #bfdbfe;
+}
+
+body.theme-dark .provider-card-tag,
+body.theme-dark .provider-availability {
   background: rgba(37, 99, 235, 0.16);
   color: #bfdbfe;
 }

@@ -324,11 +324,14 @@ async function loadProviders() {
     list.innerHTML = data.providers.map((provider) => `
       <div class="provider-card" data-reveal>
         <div class="provider-card-head">
-          <div class="provider-avatar">${getInitials(provider.name)}</div>
-          <div class="provider-main">
-            <h3>${provider.name}</h3>
-            <p>${provider.serviceCategory || service || "Home Service"} specialist in ${provider.city}</p>
+          <div class="provider-card-copy">
+            <div class="provider-avatar">${getInitials(provider.name)}</div>
+            <div class="provider-main">
+              <h3>${provider.name}</h3>
+              <p>${provider.serviceCategory || service || "Home Service"} specialist in ${provider.city}</p>
+            </div>
           </div>
+          <span class="provider-card-tag">Top Rated</span>
         </div>
         <div class="provider-meta">
           ${createMetaChip("Rating", `${provider.rating} / 5`)}
@@ -336,8 +339,11 @@ async function loadProviders() {
           ${createMetaChip("Price", `Rs. ${provider.pricing}`)}
           ${createMetaChip("City", provider.city)}
         </div>
-        <div class="actions">
-          <button class="btn" onclick="viewProvider('${provider._id}')">View Profile</button>
+        <div class="provider-card-foot">
+          <div class="provider-availability">Available for quick booking</div>
+          <div class="actions">
+            <button class="btn" onclick="viewProvider('${provider._id}')">View Profile</button>
+          </div>
         </div>
       </div>
     `).join("");
@@ -358,11 +364,14 @@ async function loadProviderProfile() {
     details.innerHTML = `
       <div class="page-card" data-reveal>
         <div class="provider-card-head">
-          <div class="provider-avatar">${getInitials(provider.name)}</div>
-          <div class="provider-main">
-            <h2>${provider.name}</h2>
-            <p>${provider.description || "Trusted local professional ready to help with your next booking."}</p>
+          <div class="provider-card-copy">
+            <div class="provider-avatar">${getInitials(provider.name)}</div>
+            <div class="provider-main">
+              <h2>${provider.name}</h2>
+              <p>${provider.description || "Trusted local professional ready to help with your next booking."}</p>
+            </div>
           </div>
+          <span class="provider-card-tag">Verified</span>
         </div>
         <div class="provider-meta" style="margin-top: 24px;">
           ${createMetaChip("Category", provider.serviceCategory)}
