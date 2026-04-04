@@ -15,6 +15,7 @@ const SERVICE_CATEGORIES = [
 ];
 
 const API_BASE = "/api";
+const THEME_KEY = "homigoTheme";
 const SERVICE_ICONS = {
   Plumbing: "PL",
   "Solar Panel Cleaning": "SP",
@@ -34,6 +35,48 @@ const SERVICE_ICONS = {
 function getCurrentUser() {
   const raw = localStorage.getItem("homigoUser");
   return raw ? JSON.parse(raw) : null;
+}
+
+function getStoredTheme() {
+  return localStorage.getItem(THEME_KEY);
+}
+
+function getSystemTheme() {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function getActiveTheme() {
+  return getStoredTheme() || "light";
+}
+
+function applyTheme(theme) {
+  document.body.classList.toggle("theme-dark", theme === "dark");
+  document.body.classList.toggle("theme-light", theme === "light");
+  document.documentElement.setAttribute("data-theme", theme);
+
+  const toggle = document.getElementById("themeToggle");
+  if (toggle) {
+    toggle.innerHTML = theme === "dark"
+      ? '<span class="theme-toggle-icon" aria-hidden="true">☀</span>'
+      : '<span class="theme-toggle-icon" aria-hidden="true">☾</span>';
+    toggle.setAttribute("aria-label", `Switch to ${theme === "dark" ? "light" : "dark"} mode`);
+    toggle.setAttribute("title", `Switch to ${theme === "dark" ? "light" : "dark"} mode`);
+  }
+}
+
+function initializeTheme() {
+  applyTheme(getActiveTheme());
+
+  const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+  mediaQuery.addEventListener("change", () => {
+    if (!getStoredTheme()) applyTheme("light");
+  });
+}
+
+function toggleTheme() {
+  const nextTheme = getActiveTheme() === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_KEY, nextTheme);
+  applyTheme(nextTheme);
 }
 
 function setCurrentUser(user) {
@@ -155,11 +198,14 @@ function bindNavigation() {
   if (!userActions) return;
   const user = getCurrentUser();
   userActions.innerHTML = user
-    ? `<span class="muted">Hi, ${user.name}</span>
+    ? `<button id="themeToggle" class="theme-toggle" type="button" onclick="toggleTheme()"></button>
+       <span class="muted">Hi, ${user.name}</span>
        <button class="btn-outline" onclick="goToRoleHome()">Dashboard</button>
        <button class="btn-danger" onclick="logout()">Logout</button>`
-    : `<a class="btn-outline" href="/login.html">Login</a>
+    : `<button id="themeToggle" class="theme-toggle" type="button" onclick="toggleTheme()"></button>
+       <a class="btn-outline" href="/login.html">Login</a>
        <a class="btn" href="/register.html">Register</a>`;
+  applyTheme(getActiveTheme());
 }
 
 function renderCategories(containerId, clickable) {
@@ -718,6 +764,7 @@ async function loadAdminPage() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  initializeTheme();
   bindNavigation();
   renderCategories("homeServicesList", false);
   renderCategories("servicesGrid", true);

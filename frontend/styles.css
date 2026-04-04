@@ -115,6 +115,39 @@ img {
   gap: 12px;
 }
 
+.theme-toggle {
+  width: 46px;
+  min-width: 46px;
+  min-height: 46px;
+  padding: 0;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.84);
+  color: var(--secondary);
+  font-weight: 700;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-2px);
+  border-color: rgba(37, 99, 235, 0.28);
+  box-shadow: 0 18px 32px rgba(15, 23, 42, 0.12);
+}
+
+.theme-toggle:active {
+  transform: scale(0.98);
+}
+
 .nav-links a,
 .nav-links button {
   position: relative;
@@ -127,30 +160,10 @@ img {
   transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.nav-links a:not(.btn):not(.btn-outline):not(.btn-danger):not(.btn-success)::after,
-.nav-links button:not(.btn):not(.btn-outline):not(.btn-danger):not(.btn-success)::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  height: 2px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--primary), rgba(37, 99, 235, 0.15));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
-}
-
 .nav-links a:not(.btn):not(.btn-outline):not(.btn-danger):not(.btn-success):hover,
 .nav-links button:not(.btn):not(.btn-outline):not(.btn-danger):not(.btn-success):hover {
   color: var(--primary);
   transform: scale(1.03);
-}
-
-.nav-links a:not(.btn):not(.btn-outline):not(.btn-danger):not(.btn-success):hover::after,
-.nav-links button:not(.btn):not(.btn-outline):not(.btn-danger):not(.btn-success):hover::after {
-  transform: scaleX(1);
 }
 
 /* Buttons */
@@ -850,6 +863,181 @@ hr {
   .provider-card-head {
     flex-direction: column;
   }
+}
+
+/* Dark mode */
+body.theme-dark {
+  --secondary: #e5eefb;
+  --background: #08111f;
+  --surface: #0f172a;
+  --surface-soft: #162033;
+  --muted: #94a3b8;
+  --border: #243247;
+  --shadow-soft: 0 14px 34px rgba(2, 6, 23, 0.45);
+  --shadow-card: 0 22px 55px rgba(2, 6, 23, 0.5);
+  --shadow-strong: 0 28px 75px rgba(2, 6, 23, 0.62);
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.22), transparent 24%),
+    radial-gradient(circle at right 10% top 18%, rgba(37, 99, 235, 0.14), transparent 20%),
+    linear-gradient(180deg, #06101d 0%, var(--background) 100%);
+}
+
+body.theme-dark .navbar {
+  background: rgba(8, 17, 31, 0.72);
+  border-bottom-color: rgba(36, 50, 71, 0.82);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.42);
+}
+
+body.theme-dark .btn-outline {
+  background: rgba(15, 23, 42, 0.82);
+  border-color: rgba(96, 165, 250, 0.24);
+  color: #bfdbfe;
+}
+
+body.theme-dark .theme-toggle {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(96, 165, 250, 0.18);
+  color: #e5eefb;
+  box-shadow: 0 12px 24px rgba(2, 6, 23, 0.3);
+}
+
+body.theme-dark .hero {
+  background:
+    radial-gradient(circle at left top, rgba(37, 99, 235, 0.22), transparent 30%),
+    linear-gradient(135deg, #0c1830 0%, #08111f 52%, #0d1730 100%);
+}
+
+body.theme-dark .hero-card,
+body.theme-dark .card,
+body.theme-dark .page-card,
+body.theme-dark .auth-card,
+body.theme-dark .dashboard-card,
+body.theme-dark .sidebar,
+body.theme-dark .stat-card,
+body.theme-dark .provider-card,
+body.theme-dark .booking-card {
+  background: rgba(15, 23, 42, 0.82);
+  border-color: rgba(51, 65, 85, 0.92);
+  box-shadow: var(--shadow-card);
+}
+
+body.theme-dark .hero-card::before,
+body.theme-dark .card::before,
+body.theme-dark .page-card::before,
+body.theme-dark .auth-card::before,
+body.theme-dark .dashboard-card::before,
+body.theme-dark .sidebar::before,
+body.theme-dark .stat-card::before,
+body.theme-dark .provider-card::before,
+body.theme-dark .booking-card::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 34%);
+}
+
+body.theme-dark .section:nth-of-type(even),
+body.theme-dark .content-wrapper:nth-of-type(even) {
+  background: linear-gradient(180deg, rgba(7, 15, 29, 0.15), rgba(12, 24, 48, 0.38));
+}
+
+body.theme-dark .service-icon,
+body.theme-dark .provider-avatar {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.28), rgba(15, 23, 42, 0.92));
+  box-shadow: 0 18px 30px rgba(2, 6, 23, 0.4);
+}
+
+body.theme-dark .service-card-tag {
+  background: rgba(37, 99, 235, 0.16);
+  color: #bfdbfe;
+}
+
+body.theme-dark .meta-chip {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.92), rgba(22, 32, 51, 0.92));
+  border-color: rgba(51, 65, 85, 0.92);
+}
+
+body.theme-dark .meta-chip strong,
+body.theme-dark .bar span {
+  color: #94a3b8;
+}
+
+body.theme-dark .meta-chip span {
+  color: #e5eefb;
+}
+
+body.theme-dark .sidebar {
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.95), rgba(22, 32, 51, 0.94));
+}
+
+body.theme-dark input,
+body.theme-dark select,
+body.theme-dark textarea {
+  color: #e5eefb;
+  background: rgba(8, 17, 31, 0.88);
+  border-color: rgba(51, 65, 85, 0.9);
+  box-shadow: inset 0 1px 2px rgba(2, 6, 23, 0.55);
+}
+
+body.theme-dark input::placeholder,
+body.theme-dark textarea::placeholder {
+  color: #64748b;
+}
+
+body.theme-dark input:focus,
+body.theme-dark select:focus,
+body.theme-dark textarea:focus {
+  border-color: rgba(96, 165, 250, 0.58);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.18), 0 14px 28px rgba(2, 6, 23, 0.35);
+}
+
+body.theme-dark hr {
+  border-top-color: rgba(51, 65, 85, 0.9);
+}
+
+body.theme-dark .notice {
+  color: #bfdbfe;
+  background: rgba(30, 64, 175, 0.18);
+  border-color: rgba(96, 165, 250, 0.2);
+}
+
+body.theme-dark .empty-state {
+  color: #fdba74;
+  background: rgba(124, 45, 18, 0.2);
+  border-color: rgba(251, 146, 60, 0.18);
+}
+
+body.theme-dark .badge {
+  background: #1e293b;
+}
+
+body.theme-dark .badge.Pending {
+  background: rgba(146, 64, 14, 0.28);
+  color: #fcd34d;
+}
+
+body.theme-dark .badge.Accepted {
+  background: rgba(29, 78, 216, 0.26);
+  color: #93c5fd;
+}
+
+body.theme-dark .badge.Completed {
+  background: rgba(22, 101, 52, 0.28);
+  color: #86efac;
+}
+
+body.theme-dark .badge.Cancelled {
+  background: rgba(153, 27, 27, 0.28);
+  color: #fca5a5;
+}
+
+body.theme-dark .progress {
+  background: rgba(30, 41, 59, 0.95);
+}
+
+body.theme-dark .pie {
+  box-shadow: inset 0 0 0 14px rgba(8, 17, 31, 0.92), 0 18px 34px rgba(2, 6, 23, 0.38);
+}
+
+body.theme-dark .footer {
+  color: #94a3b8;
 }
 
 /* Reduced motion */
