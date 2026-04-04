@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homigo | Customer Dashboard</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container nav-content">
+        <a href="/" class="brand">Homigo</a>
+        <div class="nav-links" id="userActions"></div>
+      </div>
+    </nav>
+    <main class="content-wrapper" id="customerDashboard">
+      <div class="container">
+        <div class="page-card">
+          <h2 id="customerWelcome">Welcome</h2>
+          <p class="muted">Manage bookings and settings from one place.</p>
+        </div>
+        <div class="split-layout" style="margin-top: 20px;">
+          <div class="sidebar">
+            <a href="/services.html" class="btn" style="display:block; text-align:center; margin-bottom:10px;">Book Services</a>
+            <a href="#bookings" class="btn-outline" style="display:block; text-align:center; margin-bottom:10px;">My Bookings</a>
+            <a href="#settings" class="btn-outline" style="display:block; text-align:center;">Settings</a>
+          </div>
+          <div>
+            <div class="dashboard-card" id="bookings">
+              <h3>My Bookings</h3>
+              <div id="customerBookingsList" class="table-like"></div>
+            </div>
+            <div class="dashboard-card" id="settings" style="margin-top: 20px;">
+              <h3>Settings</h3>
+              <div id="customerSettingsMessage" class="hidden"></div>
+              <form id="customerSettingsForm" class="form-grid">
+                <div class="form-group">
+                  <label>Name</label>
+                  <input name="name" required />
+                </div>
+                <div class="form-group">
+                  <label>Phone</label>
+                  <input name="phone" required />
+                </div>
+                <div class="form-group">
+                  <label>City</label>
+                  <input name="city" required />
+                </div>
+                <div class="form-group">
+                  <label>Location</label>
+                  <input name="location" />
+                </div>
+                <div class="form-group full">
+                  <button class="btn" type="submit">Update Profile</button>
+                </div>
+              </form>
+              <hr style="margin:24px 0; border:0; border-top:1px solid #e2e8f0;" />
+              <div id="passwordMessage" class="hidden"></div>
+              <form id="passwordForm" class="form-grid">
+                <div class="form-group">
+                  <label>Current Password</label>
+                  <input name="currentPassword" type="password" required />
+                </div>
+                <div class="form-group">
+                  <label>New Password</label>
+                  <input name="newPassword" type="password" required />
+                </div>
+                <div class="form-group full">
+                  <button class="btn-outline" type="submit">Change Password</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Homigo | Provider Profile</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="container nav-content">
+        <a href="/" class="brand">Homigo</a>
+        <div class="nav-links" id="userActions"></div>
+      </div>
+    </nav>
+    <main class="content-wrapper">
+      <div class="container">
+        <div id="providerDetails"></div>
+        <div class="page-card" style="margin-top: 20px;">
+          <h3>Book This Service</h3>
+          <div id="bookingMessage" class="hidden"></div>
+          <form id="bookingForm" class="form-grid">
+            <div class="form-group full">
+              <label>Service</label>
+              <input id="bookingServiceName" name="serviceName" readonly />
+            </div>
+            <div class="form-group">
+              <label>Date</label>
+              <input name="date" type="date" required />
+            </div>
+            <div class="form-group">
+              <label>Time</label>
+              <input name="time" type="time" required />
+            </div>
+            <div class="form-group full">
+              <label>Address</label>
+              <textarea name="address" required></textarea>
+            </div>
+            <div class="form-group full">
+              <button class="btn" type="submit">Confirm Booking</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
