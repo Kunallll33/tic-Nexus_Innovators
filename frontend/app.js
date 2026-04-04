@@ -15,6 +15,21 @@ const SERVICE_CATEGORIES = [
 ];
 
 const API_BASE = "/api";
+const SERVICE_ICONS = {
+  Plumbing: "PL",
+  "Solar Panel Cleaning": "SP",
+  "Car Wash": "CW",
+  Babysitting: "BB",
+  "Fitness Trainer": "FT",
+  Cleaning: "CL",
+  Electrician: "EL",
+  "AC Repair": "AC",
+  Carpentry: "CP",
+  Painting: "PT",
+  "Appliance Repair": "AR",
+  "Tiffin Service": "TF",
+  Laundry: "LD"
+};
 
 function getCurrentUser() {
   const raw = localStorage.getItem("homigoUser");
@@ -69,6 +84,62 @@ function hideMessage(id) {
   if (el) el.classList.add("hidden");
 }
 
+function getInitials(name = "") {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() || "")
+    .join("") || "HM";
+}
+
+function getServiceIcon(service) {
+  return SERVICE_ICONS[service] || "HM";
+}
+
+function createMetaChip(label, value) {
+  return `
+    <div class="meta-chip">
+      <strong>${label}</strong>
+      <span>${value}</span>
+    </div>
+  `;
+}
+
+function markRevealTargets() {
+  document.querySelectorAll(
+    ".hero-grid > *, .section .container > *, .content-wrapper .container > *, .auth-card, .page-card, .card, .provider-card, .booking-card, .dashboard-card, .stat-card, .sidebar"
+  ).forEach((element) => {
+    element.setAttribute("data-reveal", "");
+  });
+}
+
+function initScrollReveal() {
+  const revealItems = [...document.querySelectorAll("[data-reveal]")];
+  if (!revealItems.length) return;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    revealItems.forEach((item) => item.classList.add("revealed"));
+    return;
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("revealed");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.16, rootMargin: "0px 0px -40px 0px" });
+
+  revealItems.forEach((item) => observer.observe(item));
+}
+
+function refreshReveal() {
+  markRevealTargets();
+  initScrollReveal();
+}
+
 async function apiRequest(url, options = {}) {
   const response = await fetch(url, {
     headers: { "Content-Type": "application/json" },
@@ -95,12 +166,21 @@ function renderCategories(containerId, clickable) {
   const container = document.getElementById(containerId);
   if (!container) return;
   container.innerHTML = SERVICE_CATEGORIES.map((category) => `
-    <div class="card">
-      <h3>${category}</h3>
-      <p>Find reliable ${category.toLowerCase()} experts near you.</p>
-      ${clickable ? `<button class="btn" onclick="goToProviders('${category}')">Explore</button>` : ""}
+    <div class="card" data-reveal>
+      <div class="service-card-head">
+        <div class="service-card-copy">
+          <div class="service-icon">${getServiceIcon(category)}</div>
+          <h3>${category}</h3>
+          <p>Find reliable ${category.toLowerCase()} experts near you with quick booking and trusted local support.</p>
+        </div>
+        <span class="service-card-tag">Verified</span>
+      </div>
+      <div class="service-card-foot">
+        ${clickable ? `<button class="btn" onclick="goToProviders('${category}')">Explore Service</button>` : ""}
+      </div>
     </div>
   `).join("");
+  refreshReveal();
 }
 
 function setupRoleFields() {
@@ -196,17 +276,26 @@ async function loadProviders() {
     }
 
     list.innerHTML = data.providers.map((provider) => `
-      <div class="provider-card">
-        <h3>${provider.name}</h3>
-        <p><strong>Rating:</strong> ${provider.rating}</p>
-        <p><strong>Experience:</strong> ${provider.experience} years</p>
-        <p><strong>Pricing:</strong> Rs. ${provider.pricing}</p>
-        <p><strong>City:</strong> ${provider.city}</p>
+      <div class="provider-card" data-reveal>
+        <div class="provider-card-head">
+          <div class="provider-avatar">${getInitials(provider.name)}</div>
+          <div class="provider-main">
+            <h3>${provider.name}</h3>
+            <p>${provider.serviceCategory || service || "Home Service"} specialist in ${provider.city}</p>
+          </div>
+        </div>
+        <div class="provider-meta">
+          ${createMetaChip("Rating", `${provider.rating} / 5`)}
+          ${createMetaChip("Experience", `${provider.experience} years`)}
+          ${createMetaChip("Price", `Rs. ${provider.pricing}`)}
+          ${createMetaChip("City", provider.city)}
+        </div>
         <div class="actions">
           <button class="btn" onclick="viewProvider('${provider._id}')">View Profile</button>
         </div>
       </div>
     `).join("");
+    refreshReveal();
   } catch (error) {
     list.innerHTML = `<div class="empty-state">${error.message}</div>`;
   }
@@ -221,15 +310,23 @@ async function loadProviderProfile() {
     const data = await apiRequest(`${API_BASE}/providers/${providerId}`);
     const provider = data.provider;
     details.innerHTML = `
-      <div class="page-card">
-        <h2>${provider.name}</h2>
-        <p><strong>Category:</strong> ${provider.serviceCategory}</p>
-        <p><strong>Experience:</strong> ${provider.experience} years</p>
-        <p><strong>Pricing:</strong> Rs. ${provider.pricing}</p>
-        <p><strong>Description:</strong> ${provider.description || "No description added yet."}</p>
-        <p><strong>City:</strong> ${provider.city}</p>
+      <div class="page-card" data-reveal>
+        <div class="provider-card-head">
+          <div class="provider-avatar">${getInitials(provider.name)}</div>
+          <div class="provider-main">
+            <h2>${provider.name}</h2>
+            <p>${provider.description || "Trusted local professional ready to help with your next booking."}</p>
+          </div>
+        </div>
+        <div class="provider-meta" style="margin-top: 24px;">
+          ${createMetaChip("Category", provider.serviceCategory)}
+          ${createMetaChip("Experience", `${provider.experience} years`)}
+          ${createMetaChip("Pricing", `Rs. ${provider.pricing}`)}
+          ${createMetaChip("City", provider.city)}
+        </div>
       </div>
     `;
+    refreshReveal();
 
     const serviceInput = document.getElementById("bookingServiceName");
     const bookingForm = document.getElementById("bookingForm");
@@ -280,7 +377,7 @@ async function loadCustomerBookings() {
     }
 
     list.innerHTML = data.bookings.map((booking) => `
-      <div class="booking-card">
+      <div class="booking-card" data-reveal>
         <h4>${booking.serviceName}</h4>
         <p><strong>Provider:</strong> ${booking.provider?.name || "N/A"}</p>
         <p><strong>Date:</strong> ${booking.date} at ${booking.time}</p>
@@ -289,6 +386,7 @@ async function loadCustomerBookings() {
         <button class="btn-outline" onclick="alert('Service: ${booking.serviceName}\\nProvider: ${booking.provider?.name || ""}\\nDate: ${booking.date} ${booking.time}\\nStatus: ${booking.status}\\nAddress: ${booking.address}')">View Details</button>
       </div>
     `).join("");
+    refreshReveal();
   } catch (error) {
     list.innerHTML = `<div class="empty-state">${error.message}</div>`;
   }
@@ -395,7 +493,7 @@ async function renderProviderSection(section) {
 
   if (section === "bookings") {
     root.innerHTML = `
-      <div class="dashboard-card">
+      <div class="dashboard-card" data-reveal>
         <h3>Bookings</h3>
         <div class="actions">
           <button class="btn-outline" onclick="loadProviderBookings('today')">Today</button>
@@ -413,15 +511,23 @@ async function renderProviderSection(section) {
   if (section === "profile") {
     root.innerHTML = document.getElementById("providerProfileTemplate").innerHTML;
     document.getElementById("providerProfileCard").innerHTML = `
-      <div class="page-card">
-        <h2>${user.name}</h2>
-        <p><strong>Category:</strong> ${user.serviceCategory}</p>
-        <p><strong>Experience:</strong> ${user.experience} years</p>
-        <p><strong>Pricing:</strong> Rs. ${user.pricing}</p>
-        <p><strong>City:</strong> ${user.city}</p>
-        <p><strong>Description:</strong> ${user.description || "No description added yet."}</p>
+      <div class="page-card" data-reveal>
+        <div class="provider-card-head">
+          <div class="provider-avatar">${getInitials(user.name)}</div>
+          <div class="provider-main">
+            <h2>${user.name}</h2>
+            <p>${user.description || "Keep your profile polished so customers know why they should book you."}</p>
+          </div>
+        </div>
+        <div class="provider-meta" style="margin-top: 24px;">
+          ${createMetaChip("Category", user.serviceCategory)}
+          ${createMetaChip("Experience", `${user.experience} years`)}
+          ${createMetaChip("Pricing", `Rs. ${user.pricing}`)}
+          ${createMetaChip("City", user.city)}
+        </div>
       </div>
     `;
+    refreshReveal();
     return;
   }
 
@@ -436,6 +542,7 @@ async function renderProviderSection(section) {
   form.pricing.value = user.pricing || 0;
   form.description.value = user.description || "";
   form.addEventListener("submit", updateProviderSettings);
+  refreshReveal();
 }
 
 function renderDashboardMetrics(root, dashboardData, section) {
@@ -443,28 +550,30 @@ function renderDashboardMetrics(root, dashboardData, section) {
   if (section === "home") {
     root.innerHTML = `
       <div class="stats-grid">
-        <div class="stat-card"><h3>${stats.todayBookings}</h3><p class="muted">Total bookings today</p></div>
-        <div class="stat-card"><h3>${stats.pendingJobs}</h3><p class="muted">Pending jobs</p></div>
-        <div class="stat-card"><h3>${stats.completedJobs}</h3><p class="muted">Completed jobs</p></div>
+        <div class="stat-card" data-reveal><h3>${stats.todayBookings}</h3><p class="muted">Total bookings today</p></div>
+        <div class="stat-card" data-reveal><h3>${stats.pendingJobs}</h3><p class="muted">Pending jobs</p></div>
+        <div class="stat-card" data-reveal><h3>${stats.completedJobs}</h3><p class="muted">Completed jobs</p></div>
       </div>
-      <div class="dashboard-card">
+      <div class="dashboard-card" data-reveal>
         <h3>Today's Summary</h3>
         <p class="muted">Track your service activity at a glance.</p>
         <p>Total bookings handled so far: <strong>${stats.totalBookings}</strong></p>
       </div>
     `;
+    refreshReveal();
     return;
   }
 
   if (section === "earnings") {
     root.innerHTML = `
       <div class="stats-grid">
-        <div class="stat-card"><h3>Rs. ${stats.totalEarnings}</h3><p class="muted">Total earnings</p></div>
-        <div class="stat-card"><h3>Rs. ${stats.dailyEarnings}</h3><p class="muted">Daily earnings</p></div>
-        <div class="stat-card"><h3>Rs. ${stats.monthlyEarnings}</h3><p class="muted">Monthly earnings</p></div>
-        <div class="stat-card"><h3>${stats.paymentStatus}</h3><p class="muted">Payment status</p></div>
+        <div class="stat-card" data-reveal><h3>Rs. ${stats.totalEarnings}</h3><p class="muted">Total earnings</p></div>
+        <div class="stat-card" data-reveal><h3>Rs. ${stats.dailyEarnings}</h3><p class="muted">Daily earnings</p></div>
+        <div class="stat-card" data-reveal><h3>Rs. ${stats.monthlyEarnings}</h3><p class="muted">Monthly earnings</p></div>
+        <div class="stat-card" data-reveal><h3>${stats.paymentStatus}</h3><p class="muted">Payment status</p></div>
       </div>
     `;
+    refreshReveal();
     return;
   }
 
@@ -474,31 +583,32 @@ function renderDashboardMetrics(root, dashboardData, section) {
   const labels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   root.innerHTML = `
-    <div class="dashboard-card">
+    <div class="dashboard-card" data-reveal>
       <h3>Analytics Overview</h3>
       <div class="stats-grid">
-        <div class="stat-card"><h3>${analytics.completed + analytics.pending}</h3><p class="muted">Total bookings</p></div>
-        <div class="stat-card"><h3>${analytics.completed}</h3><p class="muted">Jobs completed</p></div>
-        <div class="stat-card"><h3>${completedPercent}%</h3><p class="muted">Completion rate</p></div>
+        <div class="stat-card" data-reveal><h3>${analytics.completed + analytics.pending}</h3><p class="muted">Total bookings</p></div>
+        <div class="stat-card" data-reveal><h3>${analytics.completed}</h3><p class="muted">Jobs completed</p></div>
+        <div class="stat-card" data-reveal><h3>${completedPercent}%</h3><p class="muted">Completion rate</p></div>
       </div>
     </div>
-    <div class="dashboard-card">
+    <div class="dashboard-card" data-reveal>
       <h3>Completed vs Pending</h3>
       <div class="pie" style="background: conic-gradient(#16a34a 0 ${completedPercent}%, #f59e0b ${completedPercent}% 100%);"></div>
       <p>Completed: ${completedPercent}% | Pending: ${pendingPercent}%</p>
     </div>
-    <div class="dashboard-card">
+    <div class="dashboard-card" data-reveal>
       <h3>Monthly Bookings</h3>
       <div class="chart-box">
         ${analytics.monthlyBookings.map((value, index) => `<div class="bar" style="height:${Math.max(value * 16, 12)}px"><span>${labels[index]}</span></div>`).join("")}
       </div>
     </div>
-    <div class="dashboard-card">
+    <div class="dashboard-card" data-reveal>
       <h3>Monthly Performance</h3>
       <div class="progress"><div class="progress-fill" style="width:${completedPercent}%"></div></div>
       <p class="muted">${completedPercent}% of tracked bookings are completed.</p>
     </div>
   `;
+  refreshReveal();
 }
 
 async function loadProviderBookings(filter) {
@@ -514,12 +624,14 @@ async function loadProviderBookings(filter) {
     }
 
     list.innerHTML = data.bookings.map((booking) => `
-      <div class="booking-card">
+      <div class="booking-card" data-reveal>
         <h4>${booking.serviceName}</h4>
-        <p><strong>Customer Name:</strong> ${booking.customer?.name || "N/A"}</p>
-        <p><strong>Address:</strong> ${booking.address}</p>
-        <p><strong>Service Type:</strong> ${booking.serviceName}</p>
-        <p><strong>Date & Time:</strong> ${booking.date} at ${booking.time}</p>
+        <div class="booking-meta">
+          ${createMetaChip("Customer", booking.customer?.name || "N/A")}
+          ${createMetaChip("Address", booking.address)}
+          ${createMetaChip("Service", booking.serviceName)}
+          ${createMetaChip("Schedule", `${booking.date} at ${booking.time}`)}
+        </div>
         <p><strong>Status:</strong> <span class="badge ${booking.status}">${booking.status}</span></p>
         <div class="actions">
           <button class="btn-success" onclick="updateBookingStatus('${booking._id}', 'Accepted')">Accept</button>
@@ -528,6 +640,7 @@ async function loadProviderBookings(filter) {
         </div>
       </div>
     `).join("");
+    refreshReveal();
   } catch (error) {
     list.innerHTML = `<div class="empty-state">${error.message}</div>`;
   }
@@ -580,15 +693,15 @@ async function loadAdminPage() {
     const data = await apiRequest(`${API_BASE}/dashboard/admin/summary`);
     root.innerHTML = `
       <div class="stats-grid">
-        <div class="stat-card"><h3>${data.counts.customers}</h3><p class="muted">Customers</p></div>
-        <div class="stat-card"><h3>${data.counts.providers}</h3><p class="muted">Providers</p></div>
-        <div class="stat-card"><h3>${data.counts.bookings}</h3><p class="muted">Bookings</p></div>
+        <div class="stat-card" data-reveal><h3>${data.counts.customers}</h3><p class="muted">Customers</p></div>
+        <div class="stat-card" data-reveal><h3>${data.counts.providers}</h3><p class="muted">Providers</p></div>
+        <div class="stat-card" data-reveal><h3>${data.counts.bookings}</h3><p class="muted">Bookings</p></div>
       </div>
-      <div class="dashboard-card">
+      <div class="dashboard-card" data-reveal>
         <h3>Recent Bookings</h3>
         <div class="table-like">
           ${data.recentBookings.map((booking) => `
-            <div class="booking-card">
+            <div class="booking-card" data-reveal>
               <p><strong>${booking.serviceName}</strong></p>
               <p>Customer: ${booking.customer?.name || "N/A"}</p>
               <p>Provider: ${booking.provider?.name || "N/A"}</p>
@@ -598,6 +711,7 @@ async function loadAdminPage() {
         </div>
       </div>
     `;
+    refreshReveal();
   } catch (error) {
     root.innerHTML = `<div class="empty-state">${error.message}</div>`;
   }
@@ -608,6 +722,8 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCategories("homeServicesList", false);
   renderCategories("servicesGrid", true);
   setupRoleFields();
+  markRevealTargets();
+  initScrollReveal();
 
   document.getElementById("registerForm")?.addEventListener("submit", handleRegister);
   document.getElementById("loginForm")?.addEventListener("submit", handleLogin);
